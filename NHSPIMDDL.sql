@@ -125,7 +125,7 @@ CREATE TABLE trade_item (
     nhs_eclass_code           VARCHAR(32) NOT NULL
 );
 
-ALTER TABLE trade_item ADD CONSTRAINT trade_item_pk PRIMARY KEY (gtin);
+ALTER TABLE trade_item ADD CONSTRAINT trade_item_pk PRIMARY KEY (gtin, udi_pi);
 
 ALTER TABLE manufacturer_catalog
     ADD CONSTRAINT authorized_rep_fk FOREIGN KEY ( authorized_rep_rep_id )
