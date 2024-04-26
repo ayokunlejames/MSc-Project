@@ -1,0 +1,186 @@
+
+CREATE TABLE authorized_rep (
+    rep_id         VARCHAR2(32 BYTE) NOT NULL,
+    rep_name       VARCHAR2(32 BYTE) NOT NULL,
+    contact_number CHAR(11 CHAR) NOT NULL,
+    email          VARCHAR2(32 BYTE)
+);
+
+ALTER TABLE authorized_rep ADD CONSTRAINT authorized_rep_pk PRIMARY KEY ( rep_id );
+
+CREATE TABLE gmdn (
+    gmdn_code            INTEGER NOT NULL,
+    gmdn_term_name       VARCHAR2(32 BYTE) NOT NULL,
+    gmdn_term_definition CLOB
+);
+
+ALTER TABLE gmdn ADD CONSTRAINT gmdn_pk PRIMARY KEY ( gmdn_code );
+
+CREATE TABLE item_model (
+    gmn                      VARCHAR2(25 CHAR) NOT NULL,
+    model_name               VARCHAR2(32 BYTE) NOT NULL,
+    device_type              VARCHAR2(32 BYTE) NOT NULL,
+    market_availability_date DATE,
+    lifecycle_status         VARCHAR2(32 BYTE) NOT NULL,
+    last_status_update       DATE,
+    risk_class_class_name    VARCHAR2(32 BYTE) NOT NULL
+);
+
+ALTER TABLE item_model ADD CONSTRAINT item_model_pk PRIMARY KEY ( gmn );
+
+CREATE TABLE manufacturer (
+    manufacturer_gln        NUMBER(13) NOT NULL,
+    manufacturer_name       VARCHAR2(32 BYTE) NOT NULL,
+    manufacturer_address    CLOB NOT NULL,
+    company_registration_no VARCHAR2(32 BYTE) NOT NULL,
+    customer_service_phone  CHAR(11 CHAR),
+    customer_service_email  VARCHAR2(32 BYTE)
+);
+
+ALTER TABLE manufacturer ADD CONSTRAINT manufacturer_pk PRIMARY KEY ( manufacturer_gln );
+
+CREATE TABLE manufacturer_catalog (
+    manufacturer_reference_no VARCHAR2(32 BYTE) NOT NULL,
+    product_name              VARCHAR2(32 BYTE) NOT NULL,
+    product_model             VARCHAR2(32 BYTE) NOT NULL,
+    product_category          VARCHAR2(32 BYTE),
+    market_availability_date  DATE,
+    lifecycle_status          VARCHAR2(32 BYTE) NOT NULL,
+    last_status_update        DATE,
+    manufacturer_gln          NUMBER(13) NOT NULL,
+    authorized_rep_id         VARCHAR2(32 BYTE) NOT NULL,
+    risk_class_name           VARCHAR2(32 BYTE) NOT NULL
+);
+
+ALTER TABLE manufacturer_catalog ADD CONSTRAINT manufacturer_catalog_pk PRIMARY KEY ( manufacturer_reference_no );
+
+CREATE TABLE medical_device (
+    gtin                 NUMBER(14) NOT NULL,
+    brand_name           VARCHAR2(32 BYTE) NOT NULL,
+    quantity_of_uou      INTEGER,
+    item_length          NUMBER,
+    item_height          NUMBER,
+    item_width           NUMBER,
+    item_weight          NUMBER,
+    item_volume          NUMBER,
+    unit_of_dimension    CHAR(2 CHAR),
+    product_description  CLOB,
+    storage_handling     CLOB,
+    single_use           CHAR(1),
+    restricted_no_of_use INTEGER,
+    sterile              CHAR(1),
+    sterilize_before_use CHAR(1),
+    sterilization_method CLOB,
+    item_contains_latex  CHAR(1),
+    item_contains_dehp   CHAR(1),
+    item_mri_compatible  CHAR(1),
+    nhs_eclass_code      VARCHAR2(32 BYTE) NOT NULL,
+    gmn                  VARCHAR2(25 CHAR) NOT NULL,
+    gmdn_code            INTEGER NOT NULL,
+    manufacturer_gln     NUMBER(13) NOT NULL
+);
+
+ALTER TABLE medical_device ADD CONSTRAINT medical_device_pk PRIMARY KEY ( gtin );
+
+CREATE TABLE nhs_product_classification (
+    eclass_code VARCHAR2(32 BYTE) NOT NULL,
+    description CLOB NOT NULL
+);
+
+ALTER TABLE nhs_product_classification ADD CONSTRAINT nhs_product_classification_pk PRIMARY KEY ( eclass_code );
+
+CREATE TABLE nhs_provider (
+    provider_gln             NUMBER(13) NOT NULL,
+    provider_name            VARCHAR2(32 BYTE) NOT NULL,
+    provider_address         CLOB NOT NULL,
+    provider_registration_no VARCHAR2(32 BYTE) NOT NULL
+);
+
+ALTER TABLE nhs_provider ADD CONSTRAINT nhs_provider_pk PRIMARY KEY ( provider_gln );
+
+CREATE TABLE risk_class (
+    class_name              VARCHAR2(32 BYTE) NOT NULL,
+    class_description       CLOB,
+    regulatory_requirements CLOB
+);
+
+ALTER TABLE risk_class ADD CONSTRAINT risk_class_pk PRIMARY KEY ( class_name );
+
+CREATE TABLE supplier (
+    supplier_gln            NUMBER(13) NOT NULL,
+    supplier_name           VARCHAR2(32 BYTE) NOT NULL,
+    supplier_address        CLOB NOT NULL,
+    company_registration_no VARCHAR2(32 BYTE) NOT NULL,
+    customer_service_phone  CHAR(11 CHAR),
+    customer_service_email  VARCHAR2(32 BYTE)
+);
+
+ALTER TABLE supplier ADD CONSTRAINT supplier_pk PRIMARY KEY ( supplier_gln );
+
+CREATE TABLE trade_item (
+    udi                       VARCHAR2 
+--  ERROR: VARCHAR2 size not specified 
+     NOT NULL,
+    medical_device_gtin       NUMBER(14) NOT NULL,
+    serial_number             VARCHAR2(32 BYTE),
+    batch_number              VARCHAR2(32 BYTE),
+    udi_pi                    VARCHAR2(32 BYTE) NOT NULL,
+    manufacturing_date        DATE,
+    expiry_date               DATE,
+    unit_of_issue             VARCHAR2(32 BYTE),
+    unit_of_use               VARCHAR2(32 BYTE),
+    unit_of_use_udi           NUMBER(14) NOT NULL,
+    supplier_supplier_gln     NUMBER(13) NOT NULL,
+    nhs_provider_provider_gln NUMBER(13) NOT NULL
+);
+
+ALTER TABLE trade_item ADD CONSTRAINT trade_item_pk PRIMARY KEY ( udi );
+
+ALTER TABLE item_model
+    ADD CONSTRAINT item_model_risk_class_fk FOREIGN KEY ( risk_class_class_name )
+        REFERENCES risk_class ( class_name );
+
+--  ERROR: FK name length exceeds maximum allowed length(30) 
+ALTER TABLE manufacturer_catalog
+    ADD CONSTRAINT manufacturer_catalog_authorized_rep_fk FOREIGN KEY ( authorized_rep_id )
+        REFERENCES authorized_rep ( rep_id );
+
+--  ERROR: FK name length exceeds maximum allowed length(30) 
+ALTER TABLE manufacturer_catalog
+    ADD CONSTRAINT manufacturer_catalog_manufacturer_fk FOREIGN KEY ( manufacturer_gln )
+        REFERENCES manufacturer ( manufacturer_gln );
+
+--  ERROR: FK name length exceeds maximum allowed length(30) 
+ALTER TABLE manufacturer_catalog
+    ADD CONSTRAINT manufacturer_catalog_risk_class_fk FOREIGN KEY ( risk_class_name )
+        REFERENCES risk_class ( class_name );
+
+ALTER TABLE medical_device
+    ADD CONSTRAINT medical_device_gmdn_fk FOREIGN KEY ( gmdn_code )
+        REFERENCES gmdn ( gmdn_code );
+
+ALTER TABLE medical_device
+    ADD CONSTRAINT medical_device_item_model_fk FOREIGN KEY ( gmn )
+        REFERENCES item_model ( gmn );
+
+ALTER TABLE medical_device
+    ADD CONSTRAINT medical_device_manufacturer_fk FOREIGN KEY ( manufacturer_gln )
+        REFERENCES manufacturer ( manufacturer_gln );
+
+--  ERROR: FK name length exceeds maximum allowed length(30) 
+ALTER TABLE medical_device
+    ADD CONSTRAINT medical_device_nhs_product_classification_fk FOREIGN KEY ( nhs_eclass_code )
+        REFERENCES nhs_product_classification ( eclass_code );
+
+ALTER TABLE trade_item
+    ADD CONSTRAINT trade_item_medical_device_fk FOREIGN KEY ( medical_device_gtin )
+        REFERENCES medical_device ( gtin );
+
+ALTER TABLE trade_item
+    ADD CONSTRAINT trade_item_nhs_provider_fk FOREIGN KEY ( nhs_provider_provider_gln )
+        REFERENCES nhs_provider ( provider_gln );
+
+ALTER TABLE trade_item
+    ADD CONSTRAINT trade_item_supplier_fk FOREIGN KEY ( supplier_supplier_gln )
+        REFERENCES supplier ( supplier_gln );
+
