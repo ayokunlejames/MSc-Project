@@ -346,13 +346,13 @@ def fetch_trade_item_by_provider(db, nhs_provider_gln):
       item_contains_dehp, item_mri_compatible, gmn, gmdn_code, supplier.supplier_name, manufacturer.manufacturer_name, nhs_eclass_code
       
       
-      FROM trade_item
+     FROM trade_item
       LEFT JOIN medical_device ON medical_device.gtin = trade_item.gtin
       LEFT JOIN supplier ON supplier.supplier_gln = trade_item.supplier_gln
       LEFT JOIN nhs_provider ON nhs_provider.provider_gln = trade_item.nhs_provider_gln
       LEFT JOIN manufacturer ON medical_device.manufacturer_gln = manufacturer.manufacturer_gln
 
-      WHERE nhs_provider.provider_gln = %s
+     WHERE nhs_provider.provider_gln = %s
     """
     
     cursor.execute(select_trade_item_by_provider_query, (nhs_provider_gln,))
@@ -380,16 +380,14 @@ def fetch_trade_item_by_gmdn(db, gmdn_code):
     #Fetch trade items by gmdn code
     select_trade_item_by_gmdn_query = """
       SELECT 
-       gmdn.gmdn_code, gmdn.gmdn_term_name, UDI, trade_item.gtin, brand_name, serial_number, batch_number, manufacturing_date, expiry_date, udi_pi, unit_of_issue, unit_of_use, quantity_of_uou, unit_of_use_udi, product_description, item_length, item_height, item_width, unit_of_dimension, item_weight AS 'item_weight (g)', item_volume AS 'item_volume (cubic cm)', storage_handling, single_use, restricted_no_of_use, sterile, sterilize_before_use, sterilization_method, item_contains_latex, 
-      item_contains_dehp, item_mri_compatible, gmn, nhs_provider.provider_name, supplier.supplier_name, manufacturer.manufacturer_name, nhs_eclass_code
-      
+        gmdn.gmdn_code, gmdn.gmdn_term_name, UDI, trade_item.gtin, brand_name, serial_number, batch_number, manufacturing_date, expiry_date, udi_pi, unit_of_issue, unit_of_use, quantity_of_uou, unit_of_use_udi, product_description, item_length, item_height, item_width, unit_of_dimension, item_weight AS 'item_weight (g)', item_volume AS 'item_volume (cubic cm)', storage_handling, single_use, restricted_no_of_use, sterile, sterilize_before_use, sterilization_method, item_contains_latex, item_contains_dehp, item_mri_compatible, gmn, nhs_provider.provider_name, supplier.supplier_name, manufacturer.manufacturer_name, nhs_eclass_code
       
       FROM trade_item
-      LEFT JOIN medical_device ON medical_device.gtin = trade_item.gtin
-      LEFT JOIN supplier ON supplier.supplier_gln = trade_item.supplier_gln
-      LEFT JOIN nhs_provider ON nhs_provider.provider_gln = trade_item.nhs_provider_gln
-      LEFT JOIN manufacturer ON medical_device.manufacturer_gln = manufacturer.manufacturer_gln
-      LEFT JOIN gmdn ON gmdn.gmdn_code = medical_device.gmdn_code
+        LEFT JOIN medical_device ON medical_device.gtin = trade_item.gtin
+        LEFT JOIN supplier ON supplier.supplier_gln = trade_item.supplier_gln
+        LEFT JOIN nhs_provider ON nhs_provider.provider_gln = trade_item.nhs_provider_gln
+        LEFT JOIN manufacturer ON medical_device.manufacturer_gln = manufacturer.manufacturer_gln
+        LEFT JOIN gmdn ON gmdn.gmdn_code = medical_device.gmdn_code
       WHERE gmdn.gmdn_code = %s
 
     """
@@ -418,17 +416,14 @@ def fetch_trade_item_by_eclass(db, nhs_eclass_code):
     #Fetch trade items by eclass code
     select_trade_item_by_eclass_query = """
        SELECT 
-        nhs_eclass_code, nhs_product_classification.description, gtin, brand_name, serial_number, batch_number, manufacturing_date, 
-        expiry_date, udi_pi, unit_of_issue, unit_of_use, quantity_of_uou, unit_of_use_udi,
-        item_length_cm, item_height_cm, item_width_cm, item_weight_gram, item_volume_ccm, 
-        unit_of_dimension, product_description, storage_handling, single_use, restricted_no_of_use,
-        sterile, sterilize_before_use, sterilization_method, item_contains_latex, item_contains_dehp, 
-        item_mri_compatible, item_model_gmn, gmdn_gmdn_code, 
-        manufacturer_catalog_mpc,supplier_supplier_gln, nhs_provider_provider_gln
+        nhs_eclass_code, nhs_product_classification.description, UDI, trade_item.gtin, brand_name, serial_number, batch_number, manufacturing_date, expiry_date, udi_pi, unit_of_issue, unit_of_use, quantity_of_uou, unit_of_use_udi, product_description, item_length, item_height, item_width, unit_of_dimension, item_weight AS 'item_weight (g)', item_volume AS 'item_volume (cubic cm)', storage_handling, single_use, restricted_no_of_use, sterile, sterilize_before_use, sterilization_method, item_contains_latex, item_contains_dehp, item_mri_compatible, gmn, nhs_provider.provider_name, supplier.supplier_name, manufacturer.manufacturer_name, gmdn_code
       
       FROM trade_item
-      LEFT JOIN nhs_product_classification ON trade_item.nhs_eclass_code = nhs_product_classification.eclass_code
-      
+        LEFT JOIN medical_device ON medical_device.gtin = trade_item.gtin
+        LEFT JOIN supplier ON supplier.supplier_gln = trade_item.supplier_gln
+        LEFT JOIN nhs_provider ON nhs_provider.provider_gln = trade_item.nhs_provider_gln
+        LEFT JOIN manufacturer ON medical_device.manufacturer_gln = manufacturer.manufacturer_gln
+        LEFT JOIN nhs_product_classification ON nhs_product_classification.eclass_code = medical_device.nhs_eclass_code
       WHERE nhs_eclass_code = %s
 
     """
@@ -447,7 +442,7 @@ def fetch_trade_item_by_eclass(db, nhs_eclass_code):
 # In[70]:
 
 
-def fetch_trade_item_by_riskclass(db, risk_class_class_name):
+def fetch_trade_item_by_riskclass(db, risk_class):
     """Fetch trade item records from the trade item table based on the Risk class """
     cursor = db.cursor()
     
@@ -457,22 +452,25 @@ def fetch_trade_item_by_riskclass(db, risk_class_class_name):
     #Fetch trade items by risk class code
     select_trade_item_by_riskclass_query = """
       SELECT 
-        risk_class.class_name, gtin, brand_name, serial_number, batch_number, manufacturing_date, 
-        expiry_date, udi_pi, unit_of_issue, unit_of_use, quantity_of_uou, unit_of_use_udi,
-        item_length_cm, item_height_cm, item_width_cm, item_weight_gram, item_volume_ccm, 
-        unit_of_dimension, product_description, storage_handling, single_use, restricted_no_of_use,
-        sterile, sterilize_before_use, sterilization_method, item_contains_latex, item_contains_dehp, 
-        item_mri_compatible, item_model_gmn, gmdn_gmdn_code, 
-        manufacturer_catalog_mpc,supplier_supplier_gln, nhs_provider_provider_gln, nhs_eclass_code
+        risk_class.class_name, UDI, trade_item.gtin, brand_name, serial_number, batch_number, manufacturing_date,
+        expiry_date, udi_pi, unit_of_issue, unit_of_use, quantity_of_uou, unit_of_use_udi, product_description, item_length,
+        item_height, item_width, unit_of_dimension, item_weight AS 'item_weight (g)', item_volume AS 'item_volume (cubic cm)', 
+        storage_handling, single_use, restricted_no_of_use, sterile, sterilize_before_use, sterilization_method, item_contains_latex,
+        item_contains_dehp, item_mri_compatible, medical_device.gmn, nhs_provider.provider_name, supplier.supplier_name, manufacturer.manufacturer_name,
+        gmdn_code
       
       FROM trade_item
-        LEFT JOIN item_model ON item_model.GMN = trade_item.item_model_gmn
+        LEFT JOIN medical_device ON medical_device.gtin = trade_item.gtin
+        LEFT JOIN supplier ON supplier.supplier_gln = trade_item.supplier_gln
+        LEFT JOIN nhs_provider ON nhs_provider.provider_gln = trade_item.nhs_provider_gln
+        LEFT JOIN manufacturer ON medical_device.manufacturer_gln = manufacturer.manufacturer_gln
+        LEFT JOIN item_model ON item_model.gmn = medical_device.gmn
         LEFT JOIN risk_class ON risk_class.class_name = item_model.risk_class_class_name
-      WHERE risk_class_class_name = %s
+      WHERE risk_class.class_name = %s
 
     """
     
-    cursor.execute(select_trade_item_by_riskclass_query, (risk_class_class_name,))
+    cursor.execute(select_trade_item_by_riskclass_query, (risk_class,))
     trade_item = cursor.fetchall()
     
     # Fetch column names
