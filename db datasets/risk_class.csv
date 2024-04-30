@@ -1,5 +1,0 @@
-class_name,class_description,regulatory_requirements
-"Class I","Low risk - General Controls","General controls are sufficient to provide reasonable assurance of safety and effectiveness"
-"Class IIa","Medium risk - Special Controls",""Special controls, such as performance standards, postmarket surveillance, patient registries, guidelines, and recommendations, are necessary to provide reasonable assurance of safety and effectiveness""
-"Class IIb","Medium/high risk - Additional Special Controls",""Additional special controls, such as clinical data, are necessary to provide reasonable assurance of safety and effectiveness, compared to Class IIa.""
-"Class III","High risk - Premarket Approval","Premarket approval is required to provide reasonable assurance of safety and effectiveness"
