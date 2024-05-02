@@ -120,7 +120,7 @@ CREATE TABLE `medical_device` (
   CONSTRAINT `medical_device_item_model_fk` FOREIGN KEY (`gmn`) REFERENCES `item_model` (`gmn`),
   CONSTRAINT `medical_device_manufacturer_ref_fk` FOREIGN KEY (`manufacturer_reference_no`) REFERENCES `manufacturer_catalog` (`manufacturer_reference_no`),
   CONSTRAINT `medical_device_nhs_product_classification_fk` FOREIGN KEY (`nhs_eclass_code`) REFERENCES `nhs_product_classification` (`eclass_code`),
-  CONSTRAINT medical_device_risk_class_fk FOREIGN KEY ( risk_class_class_name ) REFERENCES risk_class (`class_name`)
+  CONSTRAINT `medical_device_risk_class_fk` FOREIGN KEY ( `risk_class_name` ) REFERENCES risk_class (`class_name`)
 ) ;
     
 
