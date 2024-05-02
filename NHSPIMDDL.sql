@@ -64,10 +64,7 @@ CREATE TABLE `item_model` (
   `market_availability_date` date DEFAULT NULL,
   `lifecycle_status` varchar(32) NOT NULL,
   `last_status_update` date DEFAULT NULL,
-  `risk_class_class_name` varchar(32) NOT NULL,
-  PRIMARY KEY (`gmn`),
-  KEY `item_model_risk_class_fk` (`risk_class_class_name`),
-  CONSTRAINT `item_model_risk_class_fk` FOREIGN KEY (`risk_class_class_name`) REFERENCES `risk_class` (`class_name`)
+  PRIMARY KEY (`gmn`)
 ) ;
 
 CREATE TABLE `manufacturer_catalog` (
@@ -80,14 +77,11 @@ CREATE TABLE `manufacturer_catalog` (
   `last_status_update` date DEFAULT NULL,
   `manufacturer_manufacturer_gln` char(13) NOT NULL,
   `authorized_rep_rep_id` varchar(32) NOT NULL,
-  `risk_class_class_name` varchar(32) NOT NULL,
   PRIMARY KEY (`manufacturer_reference_no`),
   KEY `authorized_rep_fk` (`authorized_rep_rep_id`),
   KEY `manufacturer_fk` (`manufacturer_manufacturer_gln`),
-  KEY `risk_class_fk` (`risk_class_class_name`),
   CONSTRAINT `authorized_rep_fk` FOREIGN KEY (`authorized_rep_rep_id`) REFERENCES `authorized_rep` (`rep_id`),
-  CONSTRAINT `manufacturer_fk` FOREIGN KEY (`manufacturer_manufacturer_gln`) REFERENCES `manufacturer` (`manufacturer_gln`),
-  CONSTRAINT `risk_class_fk` FOREIGN KEY (`risk_class_class_name`) REFERENCES `risk_class` (`class_name`)
+  CONSTRAINT `manufacturer_fk` FOREIGN KEY (`manufacturer_manufacturer_gln`) REFERENCES `manufacturer` (`manufacturer_gln`)
 ) ;
 
 CREATE TABLE `medical_device` (
@@ -115,16 +109,20 @@ CREATE TABLE `medical_device` (
   `gmn` char(25) NOT NULL,
   `gmdn_code` varchar(32) NOT NULL,
   `manufacturer_reference_no` varchar(32) DEFAULT NULL,
+  `risk_class_name` varchar(32) NOT NULL
   PRIMARY KEY (`gtin`),
   KEY `medical_device_gmdn_fk` (`gmdn_code`),
   KEY `medical_device_item_model_fk` (`gmn`),
   KEY `medical_device_nhs_product_classification_fk` (`nhs_eclass_code`),
   KEY `medical_device_manufacturer_ref_fk` (`manufacturer_reference_no`),
+  KEY `medical_device_risk_class_fk` (`risk_class_name`),
   CONSTRAINT `medical_device_gmdn_fk` FOREIGN KEY (`gmdn_code`) REFERENCES `gmdn` (`gmdn_code`),
   CONSTRAINT `medical_device_item_model_fk` FOREIGN KEY (`gmn`) REFERENCES `item_model` (`gmn`),
   CONSTRAINT `medical_device_manufacturer_ref_fk` FOREIGN KEY (`manufacturer_reference_no`) REFERENCES `manufacturer_catalog` (`manufacturer_reference_no`),
-  CONSTRAINT `medical_device_nhs_product_classification_fk` FOREIGN KEY (`nhs_eclass_code`) REFERENCES `nhs_product_classification` (`eclass_code`)
+  CONSTRAINT `medical_device_nhs_product_classification_fk` FOREIGN KEY (`nhs_eclass_code`) REFERENCES `nhs_product_classification` (`eclass_code`),
+  CONSTRAINT medical_device_risk_class_fk FOREIGN KEY ( risk_class_class_name ) REFERENCES risk_class (`class_name`)
 ) ;
+    
 
 CREATE TABLE `trade_item` (
   `UDI` varchar(32) NOT NULL,
