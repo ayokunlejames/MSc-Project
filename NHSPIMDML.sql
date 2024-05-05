@@ -1082,6 +1082,7 @@ INSERT INTO trade_item (UDI, gtin, serial_number, batch_number, manufacturing_da
 	
 CREATE INDEX device_name
 ON medical_device (brand_name);
+	
 CREATE INDEX gmdn_name
 ON gmdn (gmdn_term_name);
 
