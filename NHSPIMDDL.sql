@@ -1230,3 +1230,5 @@ INSERT INTO trade_item (UDI, gtin, serial_number, batch_number, manufacturing_da
 	
 CREATE INDEX device_name
 ON medical_device (brand_name);
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON NHS_PIM TO authorized_user;
