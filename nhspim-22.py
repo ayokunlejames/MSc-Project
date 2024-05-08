@@ -637,13 +637,21 @@ def main():
     if options == "Home":
         st.image(logo, use_column_width=5)
         st.subheader("Welcome to the NHS' MedTech Product Information Management System")
-        st.write("Navigate from the sidebar to access the database")
-        st.write("**Access Guide**")
-        st.caption("1. Search for medical device trade items from the 'Search Trade Items' tab")
-        st.caption("2. Select Search option from dropdown and input search value")
-        st.caption("3. Lookup medical device information from 'Medical Devices' page")
-        st.caption("4. Lookup all other pages for corresponding information")
         
+        with st.expander("**Access Guide**"):
+            
+             st.markdown("""
+             Navigate from the sidebar to access the database
+             1. Search for medical device trade items from the 'Search Trade Items' tab
+             2. Select Search option from dropdown and input search value
+             3. Lookup medical device information from 'Medical Devices' page
+             4. Lookup all other pages for corresponding information
+
+             You can view a comprehensive data dictionary in [Glossary of terms](https://docs.google.com/spreadsheets/d/1m1Ty2fqvT6VlAo9CiAVMFjsHZaOecX8-ghPnITdVDQw/edit?usp=sharing)
+
+             Kindly leave a review of the system [here](https://forms.gle/xfu1ebp2Kyeds4Ai9).
+        """)
+
     elif options == "Search Trade Items":
         search_trade_items(db)
         
