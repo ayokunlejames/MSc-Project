@@ -1,8 +1,0 @@
-<?xml version = '1.0' encoding = 'UTF-8'?>
-<OSDM_Design class="oracle.dbtools.crest.model.design.Design" name="NHS_PIM" id="F707036C-66A1-5180-087F-7F50E6C72ADD" version="3.5">
-<createdBy>ayokunlejames</createdBy>
-<createdTime>2024-04-20 17:00:46 UTC</createdTime>
-<ownerDesignName>NHS_PIM</ownerDesignName>
-<capitalNames>false</capitalNames>
-<designId>F707036C-66A1-5180-087F-7F50E6C72ADD</designId>
-</OSDM_Design>
